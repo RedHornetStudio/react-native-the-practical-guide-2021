@@ -7,8 +7,14 @@ import GoalInput from './components/GoalInput';
 export default function App() {
   const [courseGoals, setCourseGoals] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  
+  console.log('RE-RENDERING COMPONENT');
+  console.log(courseGoals)
 
   const handleAddPress = (enteredGoal, setEnteredGoal) => {
+    if(enteredGoal.length === 0) {
+      return;
+    }
     setCourseGoals(currentGoals => [
       ...currentGoals,
       { uid: Math.random().toString(), value: enteredGoal }
@@ -23,6 +29,8 @@ export default function App() {
   }
 
   const handleGoalItemOnPress = (id) => {
+    console.log('TO BE DELETED: ' + id);
+    console.log(courseGoals);
     setCourseGoals(currentGoals => currentGoals.filter((goal) => goal.uid !== id));
   };
 
