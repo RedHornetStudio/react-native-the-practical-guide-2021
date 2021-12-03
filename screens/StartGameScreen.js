@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     marginVertical: 10,
-    fontWeight: '700',
+    fontFamily: 'open',
   },
   card: {
     width: '80%',
