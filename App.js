@@ -15,7 +15,7 @@ export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
   console.log(fontsLoaded);
 
-  const loadFontAsync = async () => {
+  async () => {
     console.log('starting loading fonts');
     await Font.loadAsync({
       'open': require('./assets/fonts/OpenSans-Regular.ttf'),
