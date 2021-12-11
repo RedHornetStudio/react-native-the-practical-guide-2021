@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, View, Alert, FlatList } from 'react-native';
+import { StyleSheet, View, Alert, FlatList, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import Card from '../components/Card';
@@ -66,6 +66,11 @@ const GameScreen = props => {
     setPastGuesses(pastGuesses => [nextNumber, ...pastGuesses]);
   }
 
+  let listStyle = styles.list;
+  if(Dimensions.get('window').width < 350) {
+    listStyle = styles.listBig;
+  }
+
   return (
     <View style={styles.screen}>
       <TitleText>Opponent's Guess</TitleText>
@@ -86,7 +91,7 @@ const GameScreen = props => {
           data={pastGuesses}
           renderItem={(itemData) => renderItem(pastGuesses.length, itemData)}
           keyExtractor={item => item}
-          contentContainerStyle={styles.list}
+          contentContainerStyle={listStyle}
         />
       </View>
     </View>
@@ -104,7 +109,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: 300,
     maxWidth: '80%',
-    marginTop: 20,
+    marginTop: Dimensions.get('window').height > 600 ? 20 : 10,
     padding: 20,
   },
   listContainer: {
@@ -114,6 +119,11 @@ const styles = StyleSheet.create({
   list: {
     flexGrow: 1,
     paddingHorizontal: '10%',
+    justifyContent: 'flex-end',
+  },
+  listBig: {
+    flexGrow: 1,
+    paddingHorizontal: '5%',
     justifyContent: 'flex-end',
   },
   listItem: {

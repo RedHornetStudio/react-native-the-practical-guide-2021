@@ -3,7 +3,7 @@
     "name": "react-native-the-practical-guide-2021",
     "slug": "react-native-the-practical-guide-2021",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",

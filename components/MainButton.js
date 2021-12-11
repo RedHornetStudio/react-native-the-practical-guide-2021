@@ -7,7 +7,7 @@ import CustomPressableOpacity from './CustomPressableOpacity';
 const MainButton = props => {
   return (
     <CustomPressableOpacity onPress={props.onPress} style={[styles.button, props.style]}>
-      <Text style={styles.buttonText}>{props.children}</Text>
+      <Text style={[styles.buttonText, props.textStyle]}>{props.children}</Text>
     </CustomPressableOpacity>
   );
 };
