@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Pressable, Keyboard, Alert, Dimensions, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Pressable, Keyboard, Alert, Dimensions, ScrollView, KeyboardAvoidingView } from 'react-native';
 
 import colors from '../constants/colors';
 import Card from '../components/Card';
@@ -13,6 +13,14 @@ const StartGameScreen = props => {
   const [text, setText] = useState('');
   const [confirmed, setConfirmed] = useState(false);
   const [selectedNumber, setSelectedNumber] = useState();
+
+  // styles based on orientation
+  const [buttonFontSize, setButtonFontSize] = useState(Dimensions.get('window').width < 350 ? 10 : undefined);
+  useEffect(() => {
+    const updateLayout = () => setButtonFontSize(Dimensions.get('window').width < 350 ? 10 : undefined);
+    Dimensions.addEventListener('change', updateLayout);
+    return () => Dimensions.removeEventListener('change', updateLayout);
+  }, []);
 
   const handleResetInput = () => {
     setText('');
@@ -37,33 +45,35 @@ const StartGameScreen = props => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollView}>
-      <Pressable style={styles.pressable} onPress={() => Keyboard.dismiss()}>
-        <View style={styles.startGameScreen}>
-          <TitleText>Start a New Game!</TitleText>
-          <Card style={styles.card}>
-            <BodyText>Select a Number</BodyText>
-            <CustomInput
-              style={styles.customInput}
-              value={text} onChangeText={(text) => setText(text)}
-              keyboardType="number-pad"
-              maxLength={2}
-              inputType="numbers"
-            />
-            <View style={styles.buttonContainer}>
-              <MainButton style={[styles.button, styles.resetButton]} textStyle={styles.buttonText} onPress={handleResetInput}>RESET</MainButton>
-              <MainButton style={styles.button} textStyle={styles.buttonText} onPress={handleConfirmInput}>CONFIRM</MainButton>
-            </View>
-          </Card>
-          {confirmed && 
-            <Card style={styles.confirmedNumberCard}>
-              <BodyText>You Selected</BodyText>
-              <NumberContainer>{selectedNumber}</NumberContainer>
-              <MainButton onPress={() => props.handleStartGame(selectedNumber)}>START GAME</MainButton>
+    <ScrollView contentContainerStyle={styles.scrollView} keyboardShouldPersistTaps={'handled'}>
+      {/* <KeyboardAvoidingView style={{ flex: 1 }} behavior="height"> */}
+        <Pressable style={styles.pressable} onPress={() => Keyboard.dismiss()}>
+          <View style={styles.startGameScreen}>
+            <TitleText>Start a New Game!</TitleText>
+            <Card style={styles.card}>
+              <BodyText>Select a Number</BodyText>
+              <CustomInput
+                style={styles.customInput}
+                value={text} onChangeText={(text) => setText(text)}
+                keyboardType="number-pad"
+                maxLength={2}
+                inputType="numbers"
+              />
+              <View style={styles.buttonContainer}>
+                <MainButton style={[styles.button, styles.resetButton]} textStyle={{ fontSize: buttonFontSize }} onPress={handleResetInput}>RESET</MainButton>
+                <MainButton style={styles.button} textStyle={{ fontSize: buttonFontSize }} onPress={handleConfirmInput}>CONFIRM</MainButton>
+              </View>
             </Card>
-          }
-        </View>
-      </Pressable>
+            {confirmed && 
+              <Card style={styles.confirmedNumberCard}>
+                <BodyText>You Selected</BodyText>
+                <NumberContainer>{selectedNumber}</NumberContainer>
+                <MainButton onPress={() => props.handleStartGame(selectedNumber)}>START GAME</MainButton>
+              </Card>
+            }
+          </View>
+        </Pressable>
+      {/* </KeyboardAvoidingView> */}
     </ScrollView>
   );
 };
@@ -79,7 +89,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     alignItems: 'center',
-    backgroundColor: 'red',
+    // justifyContent: 'flex-end',
   },
   card: {
     width: '80%',
@@ -100,9 +110,6 @@ const styles = StyleSheet.create({
   button: {
     paddingHorizontal: 0,
     width: '40%',
-  },
-  buttonText: {
-    fontSize: Dimensions.get('window').width < 350 ? 10 : undefined,
   },
   resetButton: {
     backgroundColor: colors.accent,

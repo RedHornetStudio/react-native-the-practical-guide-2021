@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, View, Alert, FlatList, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as ScreenOrientation from 'expo-screen-orientation';
 
 import Card from '../components/Card';
 import NumberContainer from '../components/NumberContainer';
@@ -37,6 +38,11 @@ const renderItem = (length, itemData) => {
 };
 
 const GameScreen = props => {
+  // ScreenOrientation.getOrientationAsync().then(orientation => {
+  //   console.log(orientation);
+  // });
+
+  // Controling number guessing
   const [currentGuess, setCurrentGuess] = useState(generateRandomBetween(1, 100, props.userChoice));
   const [pastGuesses, setPastGuesses] = useState([currentGuess]);
 
@@ -66,10 +72,57 @@ const GameScreen = props => {
     setPastGuesses(pastGuesses => [nextNumber, ...pastGuesses]);
   }
 
-  let listStyle = styles.list;
-  if(Dimensions.get('window').width < 350) {
-    listStyle = styles.listBig;
-  }
+  // controling device orientation
+  // useEffect(() => {
+  //   const subscription = ScreenOrientation.addOrientationChangeListener(() => {
+  //     console.log('orientation changed');
+  //   });
+  //   return () => ScreenOrientation.removeOrientationChangeListener(subscription);
+  // }, []);
+
+  // controling layout based on device dimensions
+  const [availableDeviceHeight, setAvailableDeviceHeight] = useState(Dimensions.get('window').height);
+  const [availableDeviceWidth, setAvailableDeviceWidth] = useState(Dimensions.get('window').width);
+
+  useEffect(() => {
+    const handleDimensionChange = () => {
+      setAvailableDeviceWidth(Dimensions.get('window').width);
+      setAvailableDeviceHeight(Dimensions.get('window').height);
+    };
+    Dimensions.addEventListener('change', handleDimensionChange);
+    return () => Dimensions.removeEventListener('change', handleDimensionChange);
+  }, []);
+
+  let listStyle = styles.list; 
+  availableDeviceWidth < 350 ? listStyle = styles.listBig : listStyle = styles.list
+
+  if(availableDeviceHeight < 500) {
+    return(
+      <View style={styles.screen}>
+        <TitleText>Opponent's Guess</TitleText>
+        <View style={styles.controls}>
+          <MainButton onPress={() => handleNextGuess('lower')}>
+            <Ionicons name="md-remove" size={24} color="white" />
+          </MainButton>
+          <NumberContainer>{currentGuess}</NumberContainer>
+          <MainButton onPress={() => handleNextGuess('greater')}>
+            <Ionicons name="md-add" size={24} color="white" />
+          </MainButton>
+        </View>
+        <View style={styles.listContainer}>
+          {/* <ScrollView contentContainerStyle={styles.list}>
+            {pastGuesses.map((guess, index) => renderListItem(guess, pastGuesses.length - index))}
+          </ScrollView> */}
+          <FlatList
+            data={pastGuesses}
+            renderItem={(itemData) => renderItem(pastGuesses.length, itemData)}
+            keyExtractor={item => item}
+            contentContainerStyle={listStyle}
+          />
+        </View>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.screen}>
@@ -112,13 +165,20 @@ const styles = StyleSheet.create({
     marginTop: Dimensions.get('window').height > 600 ? 20 : 10,
     padding: 20,
   },
+  controls: {
+    width: 350,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+
+  },
   listContainer: {
     flex: 1,
     width: '80%',
   },
   list: {
     flexGrow: 1,
-    paddingHorizontal: '10%',
+    paddingHorizontal: '20%',
     justifyContent: 'flex-end',
   },
   listBig: {
