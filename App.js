@@ -1,11 +1,12 @@
 import React from 'react';
-import { Platform } from 'react-native';
+import { StyleSheet, Platform, Text } from 'react-native';
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
 
@@ -68,6 +69,53 @@ export default function App() {
     );
   }
 
+  // material top tabs
+  if(true) {
+    const Tab = createMaterialTopTabNavigator();
+
+    return (
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={props => ({
+            tabBarActiveTintColor: 'white',
+            tabBarInactiveTintColor: '#ccc',
+            tabBarPressColor: 'white',
+            // icon options
+            tabBarShowIcon: true,
+            tabBarShowLabel: true,
+            tabBarIcon: ({ focused, color }) => {
+              let iconName
+              if (props.route.name === 'Meals') {
+                iconName = 'ios-restaurant';
+              } else if (props.route.name === 'Favorites') {
+                iconName = 'ios-star';
+              }
+              return <Ionicons name={iconName} size={25} color={color} />;
+            },
+            tabBarLabel: ({ focused, color }) => {
+              let label
+              if (props.route.name === 'Meals') {
+                label = 'Meals';
+              } else if (props.route.name === 'Favorites') {
+                label = 'Favorites';
+              }
+              return <Text style={[styles.materialTopTabBarLabelStyle, { color: color }]}>{label}</Text>;
+            },
+            // element styles
+            tabBarStyle: styles.materilaTopTabBarStyle,
+            tabBarItemStyle: styles.materialTopTabBarItemStyle,
+            tabBarIndicatorStyle: styles.materialTopTabBarIndicatorStyle,
+          })}
+          tabBarPosition='bottom'
+        >
+          <Tab.Screen name="Meals" component={Meals} />
+          <Tab.Screen name="Favorites" component={FavoritesScreen} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    );
+  }
+
+  // bottom tabs
   if (Platform.OS === 'android') {
     const Tab = createMaterialBottomTabNavigator();
 
@@ -112,6 +160,7 @@ export default function App() {
             },
             tabBarActiveTintColor: colors.accentColor,
             tabBarInactiveTintColor: 'gray',
+            tabBarLabelStyle: { fontFamily: 'OpenSans-Regular' },
             headerShown: false,
           })}
         >
@@ -122,3 +171,22 @@ export default function App() {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  // Material Bottom Tabs Styles
+  materilaTopTabBarStyle: {
+    backgroundColor: colors.primaryColor,
+  },
+  materialTopTabBarItemStyle: {
+    padding: 0,
+    paddingTop: 5,
+  },
+  materialTopTabBarLabelStyle: {
+    fontSize: 12,
+    fontFamily: 'OpenSans-Regular',
+  },
+  materialTopTabBarIndicatorStyle: {
+    backgroundColor: 'white',
+    top: 0,
+  },
+})
