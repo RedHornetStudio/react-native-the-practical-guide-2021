@@ -1,10 +1,12 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+import ParagraphText from '../components/ParagraphText';
 
 const FavoritesScreen = props => {
   return (
     <View style={styles.screen}>
-      <Text>The Favorites Screen!</Text>
+      <ParagraphText>The Favorites Screen!</ParagraphText>
     </View>
   );
 };

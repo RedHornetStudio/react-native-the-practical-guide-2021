@@ -1,10 +1,12 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+import ParagraphText from '../components/ParagraphText';
 
 const FiltersScreen = props => {
   return (
     <View style={styles.screen}>
-      <Text>The Filters Screen!</Text>
+      <ParagraphText>The Filters Screen!</ParagraphText>
     </View>
   );
 };
