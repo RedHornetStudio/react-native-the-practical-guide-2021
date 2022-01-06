@@ -1,29 +1,33 @@
-import React, { useRef } from 'react';
-import { StyleSheet, Pressable, Animated } from 'react-native';
+import React from 'react';
+import { StyleSheet, Pressable } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming,  } from 'react-native-reanimated';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const CustomPressableOpacity = props => {
-  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const animatedOpacity = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: animatedOpacity.value,
+    }
+  })
 
   const fadeOut = () => {
-    Animated.timing(fadeAnim, {
-      toValue: 0.2,
-      duration: 50,
-      useNativeDriver: true,
-    }).start();
+    animatedOpacity.value = withTiming(0.2, { duration: 50 });
   };
 
   const fadeIn = () => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
+    animatedOpacity.value = withTiming(1, { duration: 200 });
   };
 
   return (
-    <AnimatedPressable {...props} style={[styles.container, props.style, { opacity: fadeAnim }]} onPressIn={() => fadeOut()} onPressOut={() => fadeIn()}>
+    <AnimatedPressable
+      {...props}
+      style={[styles.container, props.style, animatedStyle]}
+      onPressIn={() => {fadeOut(); if(props.onPressIn) props.onPressIn()}} 
+      onPressOut={() => {fadeIn(); if(props.onPressOut) props.onPressOut()}}
+    >
       {props.children}
     </AnimatedPressable>
   );

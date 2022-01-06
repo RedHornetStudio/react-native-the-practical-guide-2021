@@ -4,44 +4,39 @@
 // Use contentContainerStyle property for styling View inside pressable.
 
 import React, { useRef } from 'react';
-import { StyleSheet, Pressable, Animated, View } from 'react-native';
+import { StyleSheet, Pressable, View } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 const CustomPressableRipple = props => {
-  const sizeAnim = useRef(new Animated.Value(1)).current;
-  const opacityAnim = useRef(new Animated.Value(0)).current;
-  const pressLocation = useRef(new Animated.ValueXY()).current;
+  const animatedSize = useSharedValue(1);
+  const animatedOpacity = useSharedValue(0)
+  const pressLocation = useSharedValue({ x: 0, y: 0 });
+
+  let elementHeight = useRef(0).current;
+  let elementWidth = useRef(0).current;
+  let rippleSize = useRef(0).current;
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: animatedOpacity.value,
+      transform: [{ scale: animatedSize.value }, { translateX: pressLocation.value.x / animatedSize.value }, { translateY: pressLocation.value.y / animatedSize.value }]
+    }
+  });
 
   const sizeUp = evt => {
-    sizeAnim.setValue(1);
-    opacityAnim.setValue(0);
-    pressLocation.setValue({ x: evt.nativeEvent.locationX, y: evt.nativeEvent.locationY });
-    Animated.parallel([
-      Animated.timing(sizeAnim, {
-        toValue: 1000,
-        duration: 1500,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacityAnim, {
-        toValue: 0.2,
-        duration: 200,
-        useNativeDriver: true,
-      })
-    ]).start();
+    rippleSize = Math.sqrt(Math.pow(elementHeight, 2) + Math.pow(elementWidth, 2)) / 2
+    animatedSize.value = 1;
+    animatedOpacity.value = 0;
+    evt.nativeEvent.locationX > elementWidth || evt.nativeEvent.locationY > elementHeight
+      ? pressLocation.value = { x: elementWidth / 2, y: elementHeight / 2 }
+      : pressLocation.value = { x: evt.nativeEvent.locationX, y: evt.nativeEvent.locationY };
+    animatedSize.value = withTiming(rippleSize, { duration: 400 });
+    animatedOpacity.value = withTiming(props.rippleOpacity ? props.rippleOpacity : 0.2, { duration: 50 });
   };
 
   const fadeOut = () => {
-    Animated.parallel([
-      Animated.timing(sizeAnim, {
-        toValue: 1000,
-        duration: 750,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacityAnim, {
-        toValue: 0,
-        duration: 400,
-        useNativeDriver: true,
-      })
-    ]).start();
+    animatedSize.value = withTiming(rippleSize, { duration: 400 });
+    animatedOpacity.value = withTiming(0, { duration: 400 });
   };
 
   const style = styleProp => {
@@ -67,15 +62,21 @@ const CustomPressableRipple = props => {
   };
 
   return (
-    <Pressable {...props} style={[styles.container, props.style]} onPressIn={evt => {sizeUp(evt); if(props.onPressIn) props.onPressIn()}} onPressOut={() => {fadeOut(); if(props.onPressOut) props.onPressOut()}}>
+    <Pressable
+      {...props}
+      style={[styles.container, props.style]}
+      onPressIn={evt => {sizeUp(evt); if(props.onPressIn) props.onPressIn()}}
+      onPressOut={() => {fadeOut(); if(props.onPressOut) props.onPressOut()}}
+      onLayout={evt => {elementHeight = evt.nativeEvent.layout.height; elementWidth = evt.nativeEvent.layout.width}}
+    >
       <View style={[styles.rippleContainer, style(props.style)]} pointerEvents="none">
         <Animated.View
           style={[
             styles.ripple,
             {
-              opacity: opacityAnim,
-              transform: [{ scale: sizeAnim }, { translateX: Animated.divide(pressLocation.x, sizeAnim)}, { translateY: Animated.divide(pressLocation.y, sizeAnim)}]
-            }
+              backgroundColor: props.rippleColor ? props.rippleColor : '#000',
+            },
+            animatedStyle
           ]}>
         </Animated.View>
       </View>
@@ -109,7 +110,6 @@ const styles = StyleSheet.create({
     width: 4,
     height: 4,
     borderRadius: 4 / 2,
-    backgroundColor: '#000000',
   }
 });
 

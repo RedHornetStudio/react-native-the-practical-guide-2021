@@ -1,10 +1,25 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import { StyleSheet, FlatList } from 'react-native';
+import { Ionicons } from '@expo/vector-icons'
 
 import { CATEGORIES } from '../data/dummy-data';
 import CategoryGridTile from '../components/CategoryGridTile';
+import CustomPressableOpacity from '../components/CustomPressableOpacity';
+import sharedStyles from '../shared/sharedStyles';
 
 const CategoriesScreen = props => {
+
+  // adding menu button to header
+  useLayoutEffect(() => {
+    props.navigation.setOptions({
+      headerLeft: () => (
+        <CustomPressableOpacity style={sharedStyles.menuButton} onPress={() => props.navigation.toggleDrawer()}>
+          <Ionicons name="ios-menu" size={23} color="white" />
+        </CustomPressableOpacity>
+      ),
+    });
+  }, [props.navigation]);
+
   const renderListItem = itemData => {
     return (
       <CategoryGridTile

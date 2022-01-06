@@ -1,22 +1,34 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useLayoutEffect } from 'react';
+import { StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons'
 
-import ParagraphText from '../components/ParagraphText';
+import MealsList from '../components/MealList';
+import { MEALS } from '../data/dummy-data';
+import CustomPressableOpacity from '../components/CustomPressableOpacity';
+import sharedStyles from '../shared/sharedStyles';
 
 const FavoritesScreen = props => {
+
+  // adding menu button to header
+  useLayoutEffect(() => {
+    props.navigation.setOptions({
+      headerLeft: () => (
+        <CustomPressableOpacity style={sharedStyles.menuButton} onPress={() => props.navigation.toggleDrawer()}>
+          <Ionicons name="ios-menu" size={23} color="white" />
+        </CustomPressableOpacity>
+      ),
+    });
+  }, [props.navigation]);
+
+  const displayedMeals = MEALS.filter(meal => meal.id === 'm1' || meal.id === 'm2');
+
   return (
-    <View style={styles.screen}>
-      <ParagraphText>The Favorites Screen!</ParagraphText>
-    </View>
+    <MealsList listData={displayedMeals} navigation={props.navigation} whereToNavigate="FavoriteMealDetail" />
   );
 };
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
+
 });
 
 export default FavoritesScreen;
