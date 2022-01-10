@@ -1,14 +1,23 @@
 import React, { useLayoutEffect } from 'react';
-import { StyleSheet, View, Image, ScrollView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'
+import { StyleSheet, View, Image, ScrollView, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
 
 import ParagraphText from '../components/ParagraphText';
 import HeaderText from '../components/HeaderText';
 import CustomPressableOpacity from '../components/CustomPressableOpacity';
-import { MEALS } from '../data/dummy-data'
 
 const MealDetailScreen = props => {
-  const mealDetails = MEALS.find(meal => meal.id === props.route.params.mealId);
+  const availableMeals = useSelector(state => state.mealsReducer.meals);
+  const mealDetails = availableMeals.find(meal => meal.id === props.route.params.mealId);
+
+  if (!mealDetails) {
+    return (
+      <View>
+        <Text>No such meal!</Text>
+      </View>
+    );
+  }
 
   useLayoutEffect(() => {
     props.navigation.setOptions({

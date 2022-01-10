@@ -1,11 +1,13 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
 
 import MealsList from '../components/MealList';
-import { MEALS } from '../data/dummy-data';
 
 const CategoryMealsScreen = props => {
-  const displayedMeals = MEALS.filter(meal => meal.categoryIds.indexOf(props.route.params.categoryId) >= 0);
+  const availableMeals = useSelector(state => state.mealsReducer.meals);
+
+  const displayedMeals = availableMeals.filter(meal => meal.categoryIds.indexOf(props.route.params.categoryId) >= 0);
 
   return (
     <MealsList listData={displayedMeals} navigation={props.navigation} whereToNavigate="MealDetail" />
