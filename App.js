@@ -2,25 +2,24 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
-import { createStore, combineReducers } from 'redux';
-// import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers } from 'redux';
+import { configureStore } from '@reduxjs/toolkit';
 
-import mealsReducer from './store/reducers/mealsReducer';
 import RootNavigationContainer from './navigators/RootNavigationContainer';
 import { Provider } from 'react-redux';
-// import mealsSlice from './features/mealsSlice';
-
-// const store = configureStore({
-//   reducer: mealsSlice.reducer
-// })
-
-// console.log(store);
+import mealsSlice from './features/mealsSlice';
+import favoriteMealsSlice from './features/favoriteMealsSlice';
+import filtersSlice from './features/filtersSlice';
 
 const rootReducer = combineReducers({
-  mealsReducer: mealsReducer
+  mealsReducer: mealsSlice.reducer,
+  favoriteMealsReducer: favoriteMealsSlice.reducer,
+  filtersReducer: filtersSlice.reducer,
 });
 
-const store = createStore(rootReducer);
+const store = configureStore({
+  reducer: rootReducer,
+})
 
 export default function App() {
   let [fontsLoaded] = useFonts({

@@ -4,15 +4,26 @@ import { useDispatch } from 'react-redux';
 
 import { MEALS } from '../data/dummy-data';
 import DrawerNavigator from './DrawerNavigator';
-import { loadAllMeals } from '../store/actions/mealsActions';
+import { allMealsLoaded } from '../features/mealsSlice';
+import { allFavoriteMealsLoaded } from '../features/favoriteMealsSlice';
+import { filtersChanged } from '../features/filtersSlice';
+
+// simulate data from data base
+const mealsFromDataBase = JSON.stringify(MEALS);
+const favoriteMealsFromDataBase = '["m1", "m4", "m8", "m10"]';
+const filtersFromDataBase = '["isVegan"]';
 
 const RootNavigationContainer = props => {
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // load meals asyncronously from data base and when meals are loaded update redux state
-    dispatch(loadAllMeals(MEALS));
+    // simulate loading of meals from databade by using setTimeout(), and updating state after succesful loading
+    setTimeout(() => {
+      dispatch(allMealsLoaded(mealsFromDataBase));
+      dispatch(allFavoriteMealsLoaded(favoriteMealsFromDataBase));
+      dispatch(filtersChanged(filtersFromDataBase));
+    }, 5000);
   }, []);
 
   return (

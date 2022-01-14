@@ -11,8 +11,6 @@ import MealDetailScreen from '../screens/MealDetailScreen';
 const MealsStack = createNativeStackNavigator();
 
 const MealsStackNavigator = props => {
-  const availableMeals = useSelector(state => state.mealsReducer.meals);
-
   return (
     <MealsStack.Navigator 
       initialRouteName="Categories"
@@ -27,7 +25,7 @@ const MealsStackNavigator = props => {
       <MealsStack.Screen
         name="MealDetail"
         component={MealDetailScreen}
-        options={props => ({ title: availableMeals.find(elem => elem.id === props.route.params.mealId)?.title })}
+        options={{ title: 'Meal details' }}
       />
     </MealsStack.Navigator>
   );

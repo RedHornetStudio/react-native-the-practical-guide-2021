@@ -8,6 +8,7 @@ import CustomPressableOpacity from '../components/CustomPressableOpacity';
 import sharedStyles from '../shared/sharedStyles';
 
 const CategoriesScreen = props => {
+  console.log('Categories screen rerender');
 
   // adding menu button to header
   useLayoutEffect(() => {

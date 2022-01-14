@@ -1,13 +1,15 @@
 import React, { useLayoutEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'
 import { useSelector } from 'react-redux';
 
 import MealsList from '../components/MealList';
 import CustomPressableOpacity from '../components/CustomPressableOpacity';
 import sharedStyles from '../shared/sharedStyles';
+import ParagraphText from '../components/ParagraphText';
 
 const FavoritesScreen = props => {
+  console.log('Favorites screen rerender');
 
   // adding menu button to header
   useLayoutEffect(() => {
@@ -20,8 +22,17 @@ const FavoritesScreen = props => {
     });
   }, [props.navigation]);
 
-  const availableMeals = useSelector(state => state.mealsReducer.meals);
-  const displayedMeals = availableMeals.filter(meal => meal.id === 'm1' || meal.id === 'm2');
+  const availableMeals = JSON.parse(useSelector(state => state.mealsReducer.meals));
+  const favoriteMeals = JSON.parse(useSelector(state => state.favoriteMealsReducer.favoriteMeals));
+  const displayedMeals = availableMeals.filter(meal => favoriteMeals.includes(meal.id));
+
+  if (displayedMeals.length === 0) {
+    return (
+      <View style={styles.noFavorites}>
+        <ParagraphText style={styles.noFavoritesText}>No favorite meals found. Start adding some!</ParagraphText>
+      </View>
+    );
+  }
 
   return (
     <MealsList listData={displayedMeals} navigation={props.navigation} whereToNavigate="FavoriteMealDetail" />
@@ -29,7 +40,14 @@ const FavoritesScreen = props => {
 };
 
 const styles = StyleSheet.create({
-
+  noFavorites: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noFavoritesText: {
+    fontSize: 30,
+  }
 });
 
 export default FavoritesScreen;
