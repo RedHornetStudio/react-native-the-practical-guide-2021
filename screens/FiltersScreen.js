@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState, useEffect } from 'react';
+import React, { useLayoutEffect, useState, useEffect, useReducer } from 'react';
 import { StyleSheet, View, Switch } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,10 +31,8 @@ const FiltersScreen = props => {
   const [isVegan, setIsVegan] = useState(false);
   const [isVegeterian, setIsVegeterian] = useState(false);
 
-  const filters = useSelector(state => state.filtersReducer.filters);
-  const filtersArr = JSON.parse(filters);
-  // console.log(isGlutenFree, isLactoseFree, isVegan, isVegeterian);
-  // console.log(filters);
+  const filtersString = useSelector(state => state.filtersReducer.filters);
+  const filters = JSON.parse(filtersString);
 
   const dispatch = useDispatch();
 
@@ -46,16 +44,32 @@ const FiltersScreen = props => {
           <Ionicons name="ios-menu" size={23} color="white" />
         </CustomPressableOpacity>
       ),
+      headerRight: () => (
+        <CustomPressableOpacity onPress={saveFilters}>
+          <ParagraphText style={styles.saveButtonText}>SAVE</ParagraphText>
+        </CustomPressableOpacity>
+      ),
     });
-  }, [props.navigation]);
+  }, [props.navigation, isGlutenFree, isLactoseFree, isVegan, isVegeterian]);
 
   useEffect(() => {
-    console.log('aaa');
-    setIsGlutenFree(filtersArr.indexOf('isGlutenFree') >= 0);
-    setIsLactoseFree(filtersArr.indexOf('isLactoseFree') >= 0);
-    setIsVegan(filtersArr.indexOf('isVegan') >= 0);
-    setIsVegeterian(filtersArr.indexOf('isVegeterian') >= 0);
-  }, [filters]);
+    setIsGlutenFree(filters.indexOf('isGlutenFree') >= 0);
+    setIsLactoseFree(filters.indexOf('isLactoseFree') >= 0);
+    setIsVegan(filters.indexOf('isVegan') >= 0);
+    setIsVegeterian(filters.indexOf('isVegeterian') >= 0);
+  }, [filtersString]);
+
+  useEffect(() => {
+    const unsubscribe = props.navigation.addListener('focus', () => {
+      console.log('Focus of filters screen');
+      setIsGlutenFree(filters.indexOf('isGlutenFree') >= 0);
+      setIsLactoseFree(filters.indexOf('isLactoseFree') >= 0);
+      setIsVegan(filters.indexOf('isVegan') >= 0);
+      setIsVegeterian(filters.indexOf('isVegeterian') >= 0);
+    });
+
+    return unsubscribe;
+  }, [props.navigation, filtersString]);
 
   const saveFilters = () => {
     const filtersArray = [];
@@ -64,7 +78,7 @@ const FiltersScreen = props => {
     if (isVegan) filtersArray.push('isVegan');
     if (isVegeterian) filtersArray.push('isVegeterian');
     setTimeout(() => {
-      dispatch(filtersChanged(filtersArray));
+      dispatch(filtersChanged(JSON.stringify(filtersArray)));
     }, 5000);
   };
 
@@ -72,12 +86,11 @@ const FiltersScreen = props => {
     <View style={styles.screen}>
       <HeaderText style={styles.title}>Available Filters / Restrictions</HeaderText>
       <View style={styles.filtersContainer}>
-        <FilterSwitch label="Gluten-free" value={isGlutenFree} onValueChange={value => {setIsGlutenFree(value); console.log(value)}} />
-        <FilterSwitch label="Lactose-free" value={isLactoseFree} onValueChange={value => {setIsLactoseFree(value); console.log(value)}} />
-        <FilterSwitch label="Vegan" value={isVegan} onValueChange={value => {setIsVegan(value); console.log(value)}} />
-        <FilterSwitch label="Vegeterian" value={isVegeterian} onValueChange={value => {setIsVegeterian(value); console.log(value)}} />
+        <FilterSwitch label="Gluten-free" value={isGlutenFree} onValueChange={value => setIsGlutenFree(value)} />
+        <FilterSwitch label="Lactose-free" value={isLactoseFree} onValueChange={value => setIsLactoseFree(value)} />
+        <FilterSwitch label="Vegan" value={isVegan} onValueChange={value => setIsVegan(value)} />
+        <FilterSwitch label="Vegeterian" value={isVegeterian} onValueChange={value => setIsVegeterian(value)} />
       </View>
-      <CustomPressableOpacity onPress={saveFilters}><HeaderText>save filters</HeaderText></CustomPressableOpacity>
     </View>
   );
 };
@@ -101,7 +114,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
   },
-  saveButton: {
+  saveButtonText: {
     color: 'white',
     fontSize: 15,
   },

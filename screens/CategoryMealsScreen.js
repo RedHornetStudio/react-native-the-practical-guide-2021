@@ -7,8 +7,12 @@ import ParagraphText from '../components/ParagraphText';
 
 const CategoryMealsScreen = props => {
   console.log('Category meals screen rerendered');
-  const availableMeals = JSON.parse(useSelector(state => state.mealsReducer.meals));
-  const filters = JSON.parse(useSelector(state => state.filtersReducer.filters));
+
+  const availableMealsString = useSelector(state => state.mealsReducer.meals);
+  const availableMeals = JSON.parse(availableMealsString);
+  const filtersString = useSelector(state => state.filtersReducer.filters);
+  const filters = JSON.parse(filtersString);
+
   let displayedMeals = availableMeals.filter(meal => meal.categoryIds.indexOf(props.route.params.categoryId) >= 0);
   displayedMeals = filters.includes('isGlutenFree') ? displayedMeals.filter(meal => meal.isGlutenFree) : displayedMeals;
   displayedMeals = filters.includes('isLactoseFree') ? displayedMeals.filter(meal => meal.isLactoseFree) : displayedMeals;
