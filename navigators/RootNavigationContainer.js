@@ -9,10 +9,8 @@ import { allFavoriteMealsLoaded } from '../features/favoriteMealsSlice';
 import { filtersChanged } from '../features/filtersSlice';
 
 // simulate data from data base
-const a = JSON.stringify(MEALS);
-const mealsFromDataBase = JSON.parse(a);
-const b = JSON.stringify(['m1', 'm4', 'm8', 'm10']);
-const favoriteMealsFromDataBase = JSON.parse(b)
+const mealsFromDataBase = JSON.stringify(MEALS);
+const favoriteMealsFromDataBase = '["m1", "m4", "m8", "m10"]';
 const filtersFromDataBase = '["isVegan"]';
 
 const RootNavigationContainer = props => {
