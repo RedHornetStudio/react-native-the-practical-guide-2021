@@ -22,8 +22,8 @@ const FavoritesScreen = props => {
     });
   }, [props.navigation]);
 
-  const availableMeals = JSON.parse(useSelector(state => state.mealsReducer.meals));
-  const favoriteMeals = JSON.parse(useSelector(state => state.favoriteMealsReducer.favoriteMeals));
+  const availableMeals = useSelector(state => state.mealsReducer.meals);
+  const favoriteMeals = useSelector(state => state.favoriteMealsReducer.favoriteMeals);
   const displayedMeals = availableMeals.filter(meal => favoriteMeals.includes(meal.id));
 
   if (displayedMeals.length === 0) {

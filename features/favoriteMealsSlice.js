@@ -3,20 +3,20 @@ import { createSlice } from '@reduxjs/toolkit';
 const favoriteMealsSlice = createSlice({
   name: 'favoriteMeals',
   initialState: {
-    favoriteMeals: '[]'
+    favoriteMeals: []
   },
   reducers: {
     allFavoriteMealsLoaded: (state, action) => {
       state.favoriteMeals = action.payload;
     },
     mealAddedToFavoriteMeals: (state, action) => {
-      const newFavoriteMeals = JSON.parse(state.favoriteMeals);
+      const newFavoriteMeals = state.favoriteMeals;
       if (newFavoriteMeals.indexOf(action.payload) < 0) newFavoriteMeals.push(action.payload);
-      state.favoriteMeals = JSON.stringify(newFavoriteMeals);
+      state.favoriteMeals = newFavoriteMeals;
     },
     mealDeletedFromFavoriteMeals: (state, action) => {
-      const newFavoriteMeals = JSON.parse(state.favoriteMeals).filter(mealId => mealId !== action.payload);
-      state.favoriteMeals = JSON.stringify(newFavoriteMeals);
+      const newFavoriteMeals = state.favoriteMeals.filter(mealId => mealId !== action.payload);
+      state.favoriteMeals = newFavoriteMeals;
     },
   }
 })

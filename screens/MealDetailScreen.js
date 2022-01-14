@@ -19,8 +19,8 @@ const MealDetailScreen = props => {
   let DeleteButton = CustomPressableOpacity;
   if(Platform.OS === 'android') DeleteButton = CustomPressableRipple;
 
-  const availableMeals = JSON.parse(useSelector(state => state.mealsReducer.meals));
-  const favoriteMeals = JSON.parse(useSelector(state => state.favoriteMealsReducer.favoriteMeals));
+  const availableMeals = useSelector(state => state.mealsReducer.meals);
+  const favoriteMeals = useSelector(state => state.favoriteMealsReducer.favoriteMeals);
   const mealDetails = availableMeals.find(meal => meal.id === props.route.params.mealId);
 
   useLayoutEffect(() => {
