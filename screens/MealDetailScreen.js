@@ -30,7 +30,7 @@ const MealDetailScreen = props => {
     const color = favoriteMeals.includes(props.route.params.mealId) ? 'black' : 'white';
     props.navigation.setOptions({
       headerRight: () => (
-        <CustomPressableOpacity onPress={() => toggleFavorites()}>
+        <CustomPressableOpacity onPress={() => {if (toggleFavorites) toggleFavorites() }}>
           <Ionicons name="ios-star" size={23} color={color} />
         </CustomPressableOpacity>
       ),
